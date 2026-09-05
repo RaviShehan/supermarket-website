@@ -11,6 +11,7 @@ interface CheckoutItem {
 interface CheckoutData {
     customerName: string;
     email: string;
+    phoneNumber?: string;
     address: string;
     city: string;
     zipCode: string;
@@ -34,17 +35,26 @@ export async function createOrder(data: CheckoutData) {
                 data: {
                     email: data.email,
                     name: data.customerName,
+                    username: data.email, // Required by schema (falls back to email)
+                    password: '',         // Required by schema (empty string for guest checkout)
                 },
             });
         }
 
-        // Save order & order items in database transaction
+        // Save order & order items in database
+        const subtotal = data.totalPrice - 2.0; // Subtracting default $2.00 delivery fee
+
         const order = await prisma.order.create({
             data: {
                 userId: user.id,
+                fullName: data.customerName,
+                phoneNumber: data.phoneNumber || 'N/A',
+                address: data.address,
+                city: data.city,
+                subtotal: subtotal > 0 ? subtotal : data.totalPrice,
                 totalAmount: data.totalPrice,
                 status: 'PENDING',
-                orderItems: {
+                items: { // Schema uses 'items', not 'orderItems'
                     create: data.items.map((item) => ({
                         productId: item.id,
                         quantity: item.quantity,
