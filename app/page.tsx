@@ -1,4 +1,5 @@
 export const dynamic = 'force-dynamic';
+
 import { prisma } from '@/lib/prisma';
 import ProductCard from '@/components/ProductCard';
 import Link from 'next/link';
@@ -108,7 +109,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                 id={product.id}
                 name={product.name}
                 description={product.description || ''}
-                price={product.price}
+                price={Number(product.price)} // Cast Prisma Decimal to Number for React components
                 imageUrl={product.imageUrl || ''}
               />
             ))}
