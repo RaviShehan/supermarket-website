@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { prisma } from '@/lib/prisma';
 import ProductCard from '@/components/ProductCard';
 import Link from 'next/link';
@@ -23,11 +24,11 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       ...(category ? { category: { slug: category } } : {}),
       ...(search
         ? {
-            OR: [
-              { name: { contains: search, mode: 'insensitive' } },
-              { description: { contains: search, mode: 'insensitive' } },
-            ],
-          }
+          OR: [
+            { name: { contains: search, mode: 'insensitive' } },
+            { description: { contains: search, mode: 'insensitive' } },
+          ],
+        }
         : {}),
     },
     include: { category: true },
@@ -37,7 +38,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   return (
     <main className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-8">
-        
+
         {/* Search & Category Header */}
         <div className="bg-white p-6 rounded-xl border shadow-sm space-y-4">
           <form method="GET" className="flex gap-2">
@@ -69,11 +70,10 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           <div className="flex flex-wrap gap-2 pt-2 border-t">
             <Link
               href="/"
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
-                !category
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${!category
                   ? 'bg-green-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+                }`}
             >
               All Products
             </Link>
@@ -81,11 +81,10 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               <Link
                 key={cat.id}
                 href={`/?category=${cat.slug}${search ? `&search=${search}` : ''}`}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
-                  category === cat.slug
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${category === cat.slug
                     ? 'bg-green-600 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                  }`}
               >
                 {cat.name}
               </Link>
